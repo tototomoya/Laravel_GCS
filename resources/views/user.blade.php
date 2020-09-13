@@ -17,11 +17,8 @@ use Illuminate\Support\Facades\Storage;
 $content = "登録ファイルはありません。";
 try{
     $content = Storage::disk('gcs')->get('test/' . $user->name . '.txt');
-    echo("<p>$content</p>");
 } catch (Exception $e) {
     report($e);
-    echo("<p>$content</p>");
 }
 ?>
-<p>----------------------------------------------------</p>
-
+<p>{{$content}}</p>
