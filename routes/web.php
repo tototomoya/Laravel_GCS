@@ -29,9 +29,4 @@ Route::get('/register/{name}/{password}/{email}', function($name, $password, $em
      }
 });
 
-Route::get('/cloud/tuu', function() {
-    Storage::disk('gcs')->put('test', '/home/vagrant/laravel/laravel/storage/public/test.json');
-    return "ファイル登録しました。";
-});
-
 Route::post('/{name}/upload', 'UsersController@upload');
