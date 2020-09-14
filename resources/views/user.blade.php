@@ -12,13 +12,20 @@
 </form>
 <p>---------------------------------------------------</p>
 <h3>既にGCSにアップロードしたファイルの内容</h3>
+<p>----------------------------------------------------</p>
 <?php
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+
 $content = "登録ファイルはありません。";
+$owner = session('owner') == $user->name ? True : False;
 try{
-    $content = Storage::disk('gcs')->get('test/' . $user->name . '.txt');
+    if($owner) {
+        //$content = Storage::disk('gcs')->get('test/' . $user->name . '.txt');
+        $content = Storage::disk('local')->get('test/' . $user->name . '.txt');
+    }
 } catch (Exception $e) {
     report($e);
 }
 ?>
-<p>{{$content}}</p>
+<p>{{ $content }}</p>

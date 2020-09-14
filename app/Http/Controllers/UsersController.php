@@ -20,9 +20,13 @@ class UsersController extends Controller
     }
 
     public function upload(Request $request, $name) {
+        $session = $request->session();
+        $session->put('owner', $name);
+        $session->save();
         $file = $request->file('file');
         $content = mb_convert_encoding($file->get(), "UTF-8");
-        Storage::disk('gcs')->put('test/' . $name . "." . $file->clientExtension(), $content);
+        //Storage::disk('gcs')->put('test/' . $name . "." . $file->clientExtension(), $content);
+        Storage::disk('local')->put('test/' . $name . "." . $file->clientExtension(), $content);
         return "{$name}さまのファイルを登録しました。";
     }
 }
