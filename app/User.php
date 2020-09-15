@@ -4,7 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model //クラス名を複数形にしたテーブルに所属する
+class User extends Model
 {
-    //
+    public function files() {
+        return $this->hasMany('App\File');
+    }
 }

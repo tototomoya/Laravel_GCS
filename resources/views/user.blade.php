@@ -11,8 +11,22 @@
 <button type="submit">アップロード</button>
 </form>
 <p>---------------------------------------------------</p>
+<h3>既にGCSにアップロードしたファイル一覧</h3>
+<p>----------------------------------------------------</p>
+<?php
+$files = $user->files;
+echo "<ul>";
+$base_url = "http://34.72.82.112:10500/";
+foreach($files as $file) {
+    echo "<li>". '<a href="' . $base_url . "read/" . $user->name ."/" . $file->path . '">' . $file->path . "</a>" . "</li>";
+    echo "<p>" . "最終更新日: " . $file->updated_date . "</p>";
+}
+echo "</ul>";
+?>
+<p>---------------------------------------------------</p>
 <h3>既にGCSにアップロードしたファイルの内容</h3>
 <p>----------------------------------------------------</p>
+
 <?php
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;

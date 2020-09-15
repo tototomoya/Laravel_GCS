@@ -31,3 +31,5 @@ Route::get('/register/{name}/{password}/{email}', function($name, $password, $em
 });
 
 Route::post('/{name}/upload', 'UsersController@upload');
+
+Route::get('/read/{name}/test/{file_path}', 'UsersController@owner_file');

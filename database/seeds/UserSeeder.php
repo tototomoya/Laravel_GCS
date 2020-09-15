@@ -7,7 +7,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         $i = 0;
-        while($i++ =< 20) {
+        while($i++ < 20) {
 
              DB::table('users')->insert([
                 'name' => Str::random(10),
