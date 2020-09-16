@@ -12,9 +12,10 @@ use Illuminate\Http\RedirectResponse;
 
 class UsersController extends Controller
 {
-    public function user_content($name) {
-        $user = User::where('name', $name)->first();
-        return view('user', ['user' => $user, 'files' => $user->files]);
+    public function user_content(Request $request, $user_name) {
+            $user = User::where('name', $user_name)->first();
+            $files = $user->files;
+            return view('user', ['user' => $user, 'files' => $files]); 
     }
 
     public function users_index() {
@@ -24,17 +25,9 @@ class UsersController extends Controller
 
     public function upload(Request $request, $user_name) {
         $user = User::where('name', $user_name)->first();
-        $session = $request->session();
-        $session->put('owner', $user->name);
-        //$session->put('owner', $name);
-        $session->save();
         $file = $request->file('file');
         $content = mb_convert_encoding($file->get(), "UTF-8");
-        //$path = "test/" . $name . "." . $file->clientExtension();
         //Storage::disk('gcs')->put('test/' . $name . "." . $file->clientExtension(), $content);
-        //Storage::disk('local')->put('test/' . $name . "." . $file->clientExtension(), $content);
-        //Storage::disk('local')->put($path, $content);
-
         $file_name = $file->getClientOriginalName();
         Storage::disk('local')->put($user->name . "/" . $file_name, $content);
         File::insert(
@@ -43,7 +36,6 @@ class UsersController extends Controller
                 'password' => $user->password,
                 'user_id' => $user->id,
                 'updated_date' => Carbon::now()->formatLocalized('%Y年%m月%d日(%a) %H:%M')
-
             ]);
 
         return redirect()->action(

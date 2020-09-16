@@ -30,10 +30,10 @@ Route::get('/register/{name}/{password}/{email}', function($name, $password, $em
      }
 });
 
-Route::post('/{name}/upload', 'UsersController@upload');
+Route::patch('/{name}/upload', 'UsersController@upload');
 
 Route::get('/read/{user_name}/{file_name}', 'UsersController@owner_file');
 
-Route::post('/{user_name}/{file_name}/save', 'FilesController@save');
+Route::patch('/{user_name}/{file_name}/save', 'FilesController@save');
 
-Route::get('/delete/{user_name}/{file_name}', 'FilesController@delete');
+Route::delete('/{user_name}/delete', 'FilesController@delete');

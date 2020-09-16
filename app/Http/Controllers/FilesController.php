@@ -22,8 +22,8 @@ class FilesController extends Controller
         );
     }
 
-    public function delete($user_name, $file_name) {
-        $file = File::where('path', $user_name . "/" . $file_name)->first();
+    public function delete(Request $request, $user_name) {
+        $file = File::where('path', $request->path)->first();
         $file->delete();
         return redirect()->action(
             'UsersController@user_content', ['name' => $user_name]
