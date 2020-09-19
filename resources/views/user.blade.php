@@ -1,32 +1,34 @@
+<h1>{{ $owner }}</h1>
 <p>--------------------------------------------------</p>
 <h1>「 {{ $user->name }}」さん</h1>
 <p>--------------------------------------------------</p>
 <p>あなたのアドレス: {{ $user->email }}</p>
 <p>--------------------------------------------------</p>
 <h3>GCSへのファイルのアップロード</h3>
-<?php $upload_url = url($user->name . "/upload"); ?>
+<?php $upload_url = url("/upload/" . $user->name); ?>
 <form method="POST" action="{{ $upload_url }}" enctype="multipart/form-data">
     {{ csrf_field() }}
      @method('patch')
-<input type="file" id="file" name="file" class="form-control">
+<input type="file" name="file" class="form-control">
 <button type="submit">アップロード</button>
 </form>
+
 <p>---------------------------------------------------</p>
 <h3>既にGCSにアップロードしたファイル一覧</h3>
-
-<?php
-$read_url = url('/read') . '/';
-$delete_url = url('/') . "/" . $user->name . "/delete";
-?>
 <ul>
 @foreach($files as $file)
-    <li><a href=" {{ $read_url . $file->path }} "> {{ $file->path }} </a></li>
+    <?php
+    $read_url = url("/read/" . $user->name . "/" . $file->id);
+    $delete_url = url("/delete" . "/" . $user->name);
+    $dom_form = "form_" . $file->id;
+    ?>
+    <li><a href="{{ $read_url }}"> {{ $file->path }} </a></li>
     <p>最終更新日: {{ $file->updated_date }}</p>
-    <form method="post" name="form" action="{{ $delete_url }}">
+    <form method="post" name="{{ $dom_form }}" action="{{ $delete_url }}">
         {{ csrf_field() }}
         @method('delete')
-        <input type="hidden" name="path" value={{ $file->path }}>
-        <a href="javascript:form.submit()">消去</a>
+        <input type="hidden" name="file_id" value={{ $file->id }}>
+        <a href={{ "javascript:" . $dom_form . ".submit()" }}>消去</a>
     </form>
 @endforeach
 </ul>
@@ -40,13 +42,24 @@ use Illuminate\Support\Facades\Storage;
 $content = "登録ファイルはありません。";
 try{
     foreach($files as $file) {
-        $content = Storage::disk('local')->get($file->path);
-        echo "<p>---------------------------------------------------</p>" . $file->path;
-        echo "<p>" . $content . "</p>";
+        $path_parts = pathinfo($file->path);
+        $file_extension = $path_parts["extension"];
+        //$file_type = mime_content_type($path);
+        //$img_or = preg_match('/image/' , $file_type);
+        //if($file_extension == "jpg" || $file_extension == "jpeg"){
+        $img_or = in_array($file_extension, ["jpeg", "png"]);
+        if($img_or) {
+            echo "<p>---------------------------------------------------</p>" . $file->path;
+            echo '<img src="' . asset('/storage/' . $file->path ) . '">';
+        } else {
+            $content = Storage::disk('public')->get($file->path);
+            echo "<p>---------------------------------------------------</p>" . $file->path;
+            echo "<p>" . $content . "</p>";
+        }
     }
 } catch (Exception $e) {
     report($e);
     echo "<p>" . $content . "</p>";
-
 }
 ?>
+

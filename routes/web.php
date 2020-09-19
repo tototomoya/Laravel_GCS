@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 Route::get('/', 'UsersController@users_index');
 
+Route::post('/login', 'UsersController@user_login');
+
 Route::get('/{name}', 'UsersController@user_content');
 
 Route::get('/register/{name}/{password}/{email}', function($name, $password, $email) {
@@ -30,10 +32,10 @@ Route::get('/register/{name}/{password}/{email}', function($name, $password, $em
      }
 });
 
-Route::patch('/{name}/upload', 'UsersController@upload');
+Route::patch('/upload/{name}', 'FilesController@upload');
 
-Route::get('/read/{user_name}/{file_name}', 'UsersController@owner_file');
+Route::get('/read/{user_name}/{file_id}', 'FilesController@read_file');
 
-Route::patch('/{user_name}/{file_name}/save', 'FilesController@save');
+Route::patch('save/{user_name}/{file_id}', 'FilesController@save');
 
-Route::delete('/{user_name}/delete', 'FilesController@delete');
+Route::delete('delete/{user_name}', 'FilesController@delete');

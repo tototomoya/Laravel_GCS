@@ -23,7 +23,6 @@ return [
 
     'lottery' => [2, 100],
 
-    'files' => storage_path('framework/sessions'),
 
     'cookie' => env(
         'SESSION_COOKIE',
@@ -31,10 +30,7 @@ return [
     ),
 
 
-    'path' => '/',
-
-
-    'domain' => env('SESSION_DOMAIN', null),
+    'path' => '/home/vagrant/laravel/laravel/session_data'ull,
 
 
     'secure' => env('SESSION_SECURE_COOKIE'),
