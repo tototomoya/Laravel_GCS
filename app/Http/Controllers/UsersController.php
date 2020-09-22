@@ -15,7 +15,9 @@ class UsersController extends Controller
 {
     public function user_content(Request $request, $user_name) {
         $owner = session('owner') == $user_name ? 'あなたはオーナーです。' : 'あなたはオーナーじゃないです。';
-        $user = User::where('name', $user_name)->first();
+        $user = Cache::rememberForever('user', function() use ($user_name){
+            return User::where('name', $user_name)->first();
+        });
         $files = @$user->files;
         if($files) {
             return view('user', ['user' => $user, 'files' => $files, 'owner' => $owner]);
