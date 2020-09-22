@@ -7,3 +7,11 @@ foreach ($users as $user){
 ?>
 {{ $users->links() }}
 
+<div id="app">
+    <div id="nav">
+      <router-link to="/">Home</router-link>
+    </div>
+    <router-view/>
+    </div>
+</div>
+<script src="{{ mix('js/app.js') }}"></script>

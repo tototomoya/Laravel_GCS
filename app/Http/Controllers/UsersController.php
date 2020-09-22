@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use App\Mail\SendTestMail;
 use Mail;
-use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Facades\Cache;
 
 class UsersController extends Controller
 {
@@ -17,7 +17,7 @@ class UsersController extends Controller
         $owner = session('owner') == $user_name ? 'あなたはオーナーです。' : 'あなたはオーナーじゃないです。';
         $user = User::where('name', $user_name)->first();
         $files = @$user->files;
-        if(!$files) {
+        if($files) {
             return view('user', ['user' => $user, 'files' => $files, 'owner' => $owner]);
         } else {
             return view('user', ['user' => $user, 'files' => [], 'owner' => $owner]);
@@ -40,6 +40,7 @@ class UsersController extends Controller
             User::insert(
                 ['name' => session('user_name'), 'password' => session('password'), 'email' => session('email')]
             );
+            Cache::forever('users_name', User::pluck('name'));
             return '<a href="' . url("/") . "/" . session('user_name') . '">' . 'こちらがあなたのページです。</a>';
         } else {
             return '現在このURLは使えません。';
@@ -47,7 +48,9 @@ class UsersController extends Controller
     }
 
     public function register($user_name, $password, $email) {
-        $users = User::pluck('name');
+        $users = Cache::rememberForever('users_name', function() {
+            return User::pluck('name');
+        });
         if(!$users->contains($user_name)) {
             $uuid = uniqid();
             session(['uuid' => $uuid, 'user_name' => $user_name, 'password' => $password, 'email' => $email, 'owner' => $user_name]);
@@ -69,7 +72,7 @@ class UsersController extends Controller
             $user_name = preg_replace('/\(.*/', '', $user_name);
             $new_user_name = $user_name . "(" . (string)$num . ")";
             $new_url = url('/register') . "/" . $new_user_name . "/" . $password . "/" . $email;
-            return "既に別の方がその名前を使用しています。</br>" 
+            return "既に別の方がその名前を使用しています。</br>"
                 . '<a href="' . $new_url . '">' . "こちらの名前なら利用できます。" . $new_user_name  . "</a>";
         }
     }

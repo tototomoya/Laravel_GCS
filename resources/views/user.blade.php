@@ -5,7 +5,7 @@
 <p>あなたのアドレス: {{ $user->email }}</p>
 <p>--------------------------------------------------</p>
 <h3>GCSへのファイルのアップロード</h3>
-<?php $upload_url = url("/upload/" . $user->name); ?>
+<?php $upload_url = url("/upload") . "/" . $user->name; ?>
 <form method="POST" action="{{ $upload_url }}" enctype="multipart/form-data">
     {{ csrf_field() }}
      @method('patch')
@@ -18,10 +18,11 @@
 <ul>
 @foreach($files as $file)
     <?php
-    $read_url = url("/read/" . $user->name . "/" . $file->id);
-    $delete_url = url("/delete" . "/" . $user->name);
+    $read_url = url("/read") . "/" . $user->name . "/" . $file->id;
+    $delete_url = url("/delete") . "/" . $user->name;
     $dom_form = "form_" . $file->id;
     ?>
+    
     <li><a href="{{ $read_url }}"> {{ $file->path }} </a></li>
     <p>最終更新日: {{ $file->updated_date }}</p>
     <form method="post" name="{{ $dom_form }}" action="{{ $delete_url }}">
@@ -44,10 +45,7 @@ try{
     foreach($files as $file) {
         $path_parts = pathinfo($file->path);
         $file_extension = $path_parts["extension"];
-        //$file_type = mime_content_type($path);
-        //$img_or = preg_match('/image/' , $file_type);
-        //if($file_extension == "jpg" || $file_extension == "jpeg"){
-        $img_or = in_array($file_extension, ["jpeg", "png"]);
+        $img_or = in_array($file_extension, ["jpeg", "png", "jpg"]);
         if($img_or) {
             echo "<p>---------------------------------------------------</p>" . $file->path;
             echo '<img src="' . asset('/storage/' . $file->path ) . '">';

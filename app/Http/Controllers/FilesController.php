@@ -17,13 +17,13 @@ class FilesController extends Controller
             $path_parts = pathinfo($file_name);
             $file_extension = "." . $path_parts["extension"];//memo.txt=>.txt
             $file_name_NoExtension = str_replace($file_extension, "", $file_name);//memo.txt=>memo
-            preg_match('/(?<=\().*?(?=\))/', $file_name, $num);//memo(1).txt, $num[0]=1
+            preg_match('/(?<=\().*?(?=\))/', $file_name_NoExtension, $num);//memo(1).txt, $num[0]=1
             if ($num == []) {
                 $num = array(0);
             }
             $num = (int)$num[0] + 1;
-            $file_name = preg_replace('/\(.*/', '', $file_name);//memo(1)=>memo
-            $file_name = $file_name . "(" . $num . ")" . $file_extension;
+            $file_name_NoExtension = preg_replace('/\(.*/', '', $file_name_NoExtension);//memo(1)=>memo
+            $file_name = $file_name_NoExtension . "(" . $num . ")" . $file_extension;
             $file_name = $this->re_name($user_name, $file_name, $storage);
             return $file_name;
         } else {
@@ -49,7 +49,7 @@ class FilesController extends Controller
                 'updated_date' => Carbon::now()->formatLocalized('%Y年%m月%d日(%a) %H:%M')
             ]);
         return redirect()->action(
-            'UsersController@user_content', ['name' => $user->name]
+            'UsersController@user_content', ['user_name' => $user->name]
         );
     }
 
@@ -72,7 +72,7 @@ class FilesController extends Controller
         $file->updated_date = Carbon::now()->formatLocalized('%Y年%m月%d日(%a) %H:%M');
         $file->save();
         return redirect()->action(
-            'UsersController@user_content', ['name' => $user_name]
+            'UsersController@user_content', ['user_name' => $user_name]
         );
     }
 
@@ -82,7 +82,7 @@ class FilesController extends Controller
         $storage->delete($file->path);
         $file->delete();
         return redirect()->action(
-            'UsersController@user_content', ['name' => $user_name]
+            'UsersController@user_content', ['user_name' => $user_name]
         );
     }
 }
